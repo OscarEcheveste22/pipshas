@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css')}}">
+    <title>PIPSHASH</title>
+</head>
+<body>
+    
+    
+    <div class="contenedor">
+
+        <div class="menu">
+            <a class="menu_link" href="{{url_for('pipshash.listar_pizza')}}">Administrar Pipshash</a>
+            <a class="menu_link" href="{{url_for('repartidores.listar_repartidores')}}">Administrar Repas</a>
+            <a class="menu_link" href="{{url_for('pedidos.listar_pedidos')}}">Administrar Pedidos</a>
+        </div>
+
+        <div class="dashboard">
+            <h1 class="titulo">Dashboard de Domino's Pipshash Práctica 3 - Kubernetes</h1>
+
+            <div class="dashboard_contenedor">
+
+                <div class="dashboard_contenedor-carta">
+                    <h2 class="carta_titulo">Pizzas</h2>
+                    
+                    <div class="carrusel">
+                        <button class="carrusel_btn izquierda" onclick="cambiarImagenPizza(-1)">❮</button>
+                        <img id="pizzaImg" src="{{ url_for('static', filename='img/pizza1.webp') }}" class="carrusel_img" alt="Pizza">
+                        <button class="carrusel_btn derecha" onclick="cambiarImagenPizza(1)">❯</button>
+                    </div>
+                    
+                    <p id="pizzaSabor" class="carrusel_texto">Pepperoni</p>
+                </div>
+                
+                <div class="dashboard_contenedor-carta">
+                    <h2 class="carta_titulo">Repartidores</h2>
+                    
+                    
+                    <div class="carrusel">
+                        <button class="carrusel_btn izquierda" onclick="cambiarImagenRepartidor(-1)">❮</button>
+                        <img id="repartidorImg" src="{{ url_for('static', filename='img/repa1.png') }}" class="carrusel_img" alt="Repartidor">
+                        <button class="carrusel_btn derecha" onclick="cambiarImagenRepartidor(1)">❯</button>
+                    </div>
+                    
+                    <p id="repartidorNombre" class="carrusel_texto">{{repas[0].nombre}}</p>
+                </div>
+                
+                
+
+                <div class="dashboard_contenedor-carta">
+                    <h2 class="carta_titulo">Pedidos en curso</h2>
+                    
+                    <table class="tabla_pedidos">
+                        <thead>
+                            <tr>
+                                <th>Num de pedido</th>
+                                <th>Pizzas</th>
+                                <th>Repartidor</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for pedido in pedidos %}
+                            <tr>
+                                <td>{{pedido.id}}</td>
+                                <td>
+                                    {% for orden in ordenes %}
+                                        {% if pedido.orden_id == orden.id %}
+                                            {% for pizza in pizzas %}
+                                                {% if orden.pizza_id == pizza.id %}
+                                                    {{ pizza.nombre ~ " x " ~ orden.cantidad }}
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% endif %}
+                                    {% endfor %}
+                                </td>
+                                <td>
+                                    {% for repa in repasl %}
+                                        {% if pedido.repartidor_id == repa.id %}
+                                            {{ repa.nombre }}
+                                        {% endif %}
+                                    {% endfor %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            
+                        </tbody>
+                    </table>
+                </div>
+                
+
+            </div>
+        </div>
+
+
+    </div>
+
+    <script>
+        var listaRepas = JSON.parse('{{ repas | tojson | safe }}');
+        var listaPizzas = JSON.parse('{{ pizzas | tojson | safe }}');
+    </script>
+    <script src="{{url_for('static', filename='script.js')}}"></script>
+</body>
+</html>
